@@ -7,7 +7,7 @@ import "./App.css";
 
 function Home() {
   const [todos, setTodos] = useState([]);
-  const g = () =>
+  const getTasks = () =>
     axios
       .get("http://localhost:3001/get")
       // гет запрос на сервер получение данных в констнту g
@@ -17,12 +17,12 @@ function Home() {
       })
       .catch((err) => console.log(err));
 
-  const d = (id) =>
+  const deleteTask = (id) =>
     axios
       .post("http://localhost:3001/delete", {
-        task: id,
+        taskId: id,
       })
-      .then(() => g());
+      .then(() => getTasks());
 
   const check = (id, isChecked) =>
     axios.post("http://localhost:3001/check", {
@@ -31,13 +31,13 @@ function Home() {
     });
 
   useEffect(() => {
-    g(); // вызываем функцию g при запуске страницы 1 раз!!!
+    getTasks(); // вызываем функцию g при запуске страницы 1 раз!!!
   }, []);
 
   return (
     <div className="home">
       <h2>ToDo List</h2>
-      <Create onAdd={g} />
+      <Create onAdd={getTasks} />
       {/* draw "create" component and pass finctioin g() without init */}
       <ul>
         {todos.map((todo) => {
@@ -50,7 +50,7 @@ function Home() {
                 onChange={(event) => check(todo._id, event.target.checked)}
               ></input>
               <span className="todoText">{todo.task}</span>
-              <button onClick={() => d(todo._id)}>X</button>
+              <button onClick={() => deleteTask(todo._id)}>X</button>
             </li>
           );
         })}

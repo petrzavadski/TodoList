@@ -25,27 +25,37 @@ app.post("/add", (req, res) => {
   const task = req.body.task;
 
   TodoModel.create({ task: task, checked: false })
-    .then((result) => res.json(result))
-    .catch((err) => res.json(err));
+    .then((result) => {
+      console.log(result);
+      res.json(result);
+    })
+    .catch((err) => {
+      res.status(500).json(err);
+    });
 });
 
 app.post("/delete", (req, res) => {
-  const task = req.body.task;
-  TodoModel.deleteOne({ _id: task })
+  const taskId = req.body.taskId;
+  TodoModel.deleteOne({ _id: taskId })
     .then((result) => res.json(result))
     .catch((err) => res.json(err));
 });
 
 app.post("/check", async (req, res) => {
-  const task = req.body.task;
-  console.log(req.body);
-  const todo = await TodoModel.findOne({ _id: task });
+  try {
+    const task = req.body.task;
+    console.log(req.body);
+    const todo = await TodoModel.findOne({ _id: task });
 
-  todo.checked = req.body.isChecked;
+    todo.checked = req.body.isChecked;
 
-  await todo.save();
+    await todo.save();
 
-  res.status(200);
+    res.sendStatus(200);
+  } catch (err) {
+    console.log(err);
+    res.sendStatus(500);
+  }
 });
 
 app.listen(3001, () => {
